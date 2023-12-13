@@ -1,0 +1,8 @@
+pypdf
+PyPDF2
+biopython
+requests-html
+metapub
+requests
+numpy
+pandas
