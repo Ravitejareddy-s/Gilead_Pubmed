@@ -6,3 +6,4 @@ metapub
 requests
 numpy
 pandas
+boto3
