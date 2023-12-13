@@ -278,6 +278,49 @@ def download_article_text(df):
   except Exception as e:
       print("An Exception occured : {}".format(e))
 
+def fetch_additional_metadata_helper_2(PMCID):
+  if(PMCID=='No Article found'):
+    return("No Article found'")
+  else:
+
+    url = f"https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=pmc&id={PMCID}&retmode=json"
+    response = requests.get(url)
+    if response.status_code == 200:
+        data = response.json()
+        pmc_live_date = data['result'][PMCID]['pmclivedate']
+        return pmc_live_date
+    else:
+        return 'Request failed'
+
+def fetch_additional_metadata_helper(pubmed_id):
+
+  url = f"https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=pubmed&id={pubmed_id}&retmode=json"
+  response = requests.get(url)
+  if response.status_code == 200:
+      data = response.json()
+
+      # uid = data['result']['uids'][0]
+      record = data['result'][pubmed_id]
+
+      sortfirstauthor = record.get('sortfirstauthor', '')
+      pages = record.get('pages', '')
+      volume = record.get('volume', '')
+      issue = record.get('issue', '')
+      source = record.get('source', '')
+      pubdate = record.get('sortpubdate', '').split(' ')[0]
+      availablefromurl = record.get('availablefromurl', '')
+      attributes = record.get('attributes', [])
+
+
+      return sortfirstauthor,pages,volume,issue,source,pubdate,availablefromurl,attributes
+  else:
+      return 'Request failed', 'Request failed', 'Request failed', 'Request failed', 'Request failed', 'Request failed', 'Request failed', 'Request failed'
+
+def fetch_additional_metadata(df):
+  df['pmclivedate'] = df['PMCID'].apply(lambda x: pd.Series(fetch_additional_metadata_helper_2(x)))
+  df[['sortfirstauthor', 'pages', 'volume', 'issue', 'source', 'pubdate', 'availablefromurl', 'attributes']] = df['PubMed_ID'].apply(lambda x: pd.Series(fetch_additional_metadata_helper(x)))
+  return(df)
+
 # Get the metadata
 # Get the current date and time
 current_datetime = datetime.now()
@@ -295,6 +338,7 @@ formatted_date_15_days_ago = date_15_days_ago.strftime("%Y/%m/%d")
 for i in config["therapeutic area"]:
   search_keyword=f'''("{formatted_date_15_days_ago}"[Date - Publication] : "{formatted_current_date}"[Date - Publication]) AND ({i})'''
   pubmedMetaData=fetch_pubmed_metadata(search_keyword)
+  pubmedMetaData=fetch_additional_metadata(pubmedMetaData)
   # pubmedMetaData.to_csv(f'{i}.csv', index=False)
 
 
