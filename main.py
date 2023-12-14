@@ -32,7 +32,7 @@ def search(query):
    query = exclusion_criteria + query
    handle = Entrez.esearch(db='pubmed',
                            sort='relevance',
-                           retmax='250000',
+                           retmax=config['retmax'],
                            retmode='xml',
                            term=query)
    results = Entrez.read(handle)

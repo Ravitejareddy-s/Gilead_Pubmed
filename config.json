@@ -2,6 +2,7 @@
   "bucket_name": "bucketmaharshi",
   "therapeutic area":["idiopathic pulmonary fibrosis"],
   "exclusion_criteria" : "(english[la]) AND (humans[mh]) NOT (letter[pt]) NOT (interview[pt]) NOT (comment[pt]) NOT (editorial[pt]) NOT (published erratum[pt]) NOT (news[pt]) NOT (case reports[pt]) NOT (Journal of Ethnopharmacology[ta]) NOT (Traditional Medicine Research[ta]) NOT (American Journal of Chinese Medicine[ta]) AND ",
-  "past_days" : 15
+  "past_days" : 15,
+  "retmax":'250000'
   
 }
